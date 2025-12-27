@@ -3,10 +3,11 @@ package users
 import (
 	"database/sql"
 	"fmt"
-	"github.com/gofrs/uuid"
-	"github.com/sirupsen/logrus"
 	"middleware/example/internal/models"
 	repository "middleware/example/internal/repositories/users"
+
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 func GetAllUsers() ([]models.User, error) {
@@ -38,5 +39,13 @@ func GetUserById(id uuid.UUID) (*models.User, error) {
 		}
 	}
 
+	return user, err
+}
+
+func CreateUser(name string) (*models.User, error) {
+	user, err := repository.CreateUser(name)
+	if err != nil {
+		return nil, err
+	}
 	return user, err
 }

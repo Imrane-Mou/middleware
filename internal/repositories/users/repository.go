@@ -1,9 +1,10 @@
 package users
 
 import (
-	"github.com/gofrs/uuid"
 	"middleware/example/internal/helpers"
 	"middleware/example/internal/models"
+
+	"github.com/gofrs/uuid"
 )
 
 func GetAllUsers() ([]models.User, error) {
@@ -47,4 +48,31 @@ func GetUserById(id uuid.UUID) (*models.User, error) {
 		return nil, err
 	}
 	return &user, err
+}
+
+func CreateUser(name string) (*models.User, error) {
+	db, err := helpers.OpenDB()
+	if err != nil {
+		return nil, err
+	}
+	defer helpers.CloseDB(db)
+
+	// generate UUID
+	id := uuid.Must(uuid.NewV4())
+
+	// insert into database
+	_, err = db.Exec(
+		"INSERT INTO users (id, name) VALUES (?, ?)",
+		id.String(),
+		name,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// return created user
+	return &models.User{
+		Id:   &id,
+		Name: name,
+	}, nil
 }

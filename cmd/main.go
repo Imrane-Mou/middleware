@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/sirupsen/logrus"
 	"middleware/example/internal/controllers/users"
 	"middleware/example/internal/helpers"
 	_ "middleware/example/internal/models"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -18,6 +19,13 @@ func main() {
 			r.Use(users.Context)      // Use Context method to get user ID
 			r.Get("/", users.GetUser) // GET /users/{id}
 		})
+
+		r.Post("/", users.PostUser)
+		r.Route("/{name}", func(r chi.Router) { // route /users/{name}
+			r.Use(users.Context)       // Use Context method to get user ID
+			r.Get("/", users.PostUser) // GET /users/{name}
+		})
+
 	})
 
 	logrus.Info("[INFO] Web server started. Now listening on *:8080")
